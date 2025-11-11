@@ -1,45 +1,44 @@
 ﻿<?php
-header('Content-Type: text/html; charset=utf-8');
-include 'Appointment.php';
+header(''Content-Type: text/html; charset=utf-8'');
+include ''Appointment.php'';
 
 try {
     $pdo = new PDO(
-        'mysql:host=db;dbname=clinic_db',
-        'clinic_user',
-        'clinic_pass'
+        ''mysql:host=db;dbname=clinic_db'',
+        ''clinic_user'',
+        ''clinic_pass''
     );
-    $pdo->exec("SET NAMES 'utf8mb4'");
+    $pdo->exec("SET NAMES ''utf8mb4''");
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     
     $appointment = new Appointment($pdo);
-    $appointment->createTable();
+    $appointment->createTables();
     
-    $message = '';
-    $messageType = '';
+    $message = '''';
+    $messageType = '''';
     
     if ($_POST) {
-        $patient_name = $_POST['patient_name'];
-        $patient_phone = $_POST['patient_phone'];
-        $doctor_name = $_POST['doctor_name'];
-        $specialization = $_POST['specialization'];
-        $appointment_date = $_POST['appointment_date'];
-        $appointment_time = $_POST['appointment_time'];
-        $symptoms = $_POST['symptoms'];
+        $patient_name = $_POST[''patient_name''];
+        $patient_phone = $_POST[''patient_phone''];
+        $doctor_id = $_POST[''doctor_id''];
+        $appointment_date = $_POST[''appointment_date''];
+        $appointment_time = $_POST[''appointment_time''];
+        $symptoms = $_POST[''symptoms''];
         
-        if ($appointment->addAppointment($patient_name, $patient_phone, $doctor_name, $specialization, $appointment_date, $appointment_time, $symptoms)) {
-            $message = '🎉 Запись на прием успешно создана! Мы свяжемся с вами для подтверждения.';
-            $messageType = 'success';
+        if ($appointment->addAppointment($patient_name, $patient_phone, $doctor_id, $appointment_date, $appointment_time, $symptoms)) {
+            $message = ''🎉 Запись на прием успешно создана! Мы свяжемся с вами для подтверждения.'';
+            $messageType = ''success'';
         } else {
-            $message = '❌ Ошибка при создании записи. Пожалуйста, попробуйте еще раз.';
-            $messageType = 'error';
+            $message = ''❌ Ошибка при создании записи. Пожалуйста, попробуйте еще раз.'';
+            $messageType = ''error'';
         }
     }
     
     $appointments = $appointment->getAllAppointments();
     
 } catch(PDOException $e) {
-    $message = '❌ Ошибка базы данных: ' . $e->getMessage();
-    $messageType = 'error';
+    $message = ''❌ Ошибка базы данных: '' . $e->getMessage();
+    $messageType = ''error'';
 }
 ?>
 <!DOCTYPE html>
@@ -63,17 +62,15 @@ try {
                 </div>
             <?php endif; ?>
             
-            <?php if (isset($_POST) && $messageType == 'success'): ?>
+            <?php if (isset($_POST) && $messageType == ''success''): ?>
                 <div class="card">
                     <h2>📄 Детали записи</h2>
-                    <p><strong>Пациент:</strong> <?php echo htmlspecialchars($_POST['patient_name']); ?></p>
-                    <p><strong>Телефон:</strong> <?php echo htmlspecialchars($_POST['patient_phone']); ?></p>
-                    <p><strong>Врач:</strong> <?php echo htmlspecialchars($_POST['doctor_name']); ?></p>
-                    <p><strong>Специализация:</strong> <?php echo htmlspecialchars($_POST['specialization']); ?></p>
-                    <p><strong>Дата приема:</strong> <?php echo $_POST['appointment_date']; ?></p>
-                    <p><strong>Время приема:</strong> <?php echo $_POST['appointment_time']; ?></p>
-                    <?php if (!empty($_POST['symptoms'])): ?>
-                        <p><strong>Жалобы:</strong> <?php echo htmlspecialchars($_POST['symptoms']); ?></p>
+                    <p><strong>Пациент:</strong> <?php echo htmlspecialchars($_POST[''patient_name'']); ?></p>
+                    <p><strong>Телефон:</strong> <?php echo htmlspecialchars($_POST[''patient_phone'']); ?></p>
+                    <p><strong>Дата приема:</strong> <?php echo $_POST[''appointment_date'']; ?></p>
+                    <p><strong>Время приема:</strong> <?php echo $_POST[''appointment_time'']; ?></p>
+                    <?php if (!empty($_POST[''symptoms''])): ?>
+                        <p><strong>Жалобы:</strong> <?php echo htmlspecialchars($_POST[''symptoms'']); ?></p>
                     <?php endif; ?>
                 </div>
             <?php endif; ?>
@@ -82,7 +79,7 @@ try {
                 <div class="card">
                     <h2>👥 Последние записи</h2>
                     <div class="table-container">
-                        <table class="appointments-table">
+                        <table class="data-table">
                             <thead>
                                 <tr>
                                     <th>Пациент</th>
@@ -97,19 +94,19 @@ try {
                                 $recentAppointments = array_slice($appointments, 0, 5);
                                 foreach ($recentAppointments as $apt): ?>
                                     <tr>
-                                        <td><?php echo htmlspecialchars($apt['patient_name']); ?></td>
-                                        <td><?php echo htmlspecialchars($apt['doctor_name']); ?></td>
-                                        <td><?php echo $apt['appointment_date']; ?></td>
-                                        <td><?php echo $apt['appointment_time']; ?></td>
+                                        <td><?php echo htmlspecialchars($apt[''patient_name'']); ?></td>
+                                        <td><?php echo htmlspecialchars($apt[''doctor_name'']); ?></td>
+                                        <td><?php echo $apt[''appointment_date'']; ?></td>
+                                        <td><?php echo $apt[''appointment_time'']; ?></td>
                                         <td>
                                             <?php 
                                             $statusText = [
-                                                'pending' => '⏳ Ожидание',
-                                                'confirmed' => '✅ Подтверждено',
-                                                'completed' => '🏁 Завершено',
-                                                'cancelled' => '❌ Отменено'
+                                                ''pending'' => ''⏳ Ожидание'',
+                                                ''confirmed'' => ''✅ Подтверждено'',
+                                                ''completed'' => ''🏁 Завершено'',
+                                                ''cancelled'' => ''❌ Отменено''
                                             ];
-                                            echo $statusText[$apt['status']];
+                                            echo $statusText[$apt[''status'']];
                                             ?>
                                         </td>
                                     </tr>

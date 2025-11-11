@@ -1,29 +1,48 @@
-﻿services:
+﻿version: '3.8'
+services:
   nginx:
     image: nginx:alpine
-    container_name: lab2_nginx
+    container_name: lab5_nginx
     ports:
       - "8080:80"
     volumes:
       - ./www:/var/www/html
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - php
-    networks:
-      - lab2_network
+    restart: unless-stopped  # Добавляем политику перезапуска
 
   php:
     build: .
-    container_name: lab2_php
+    container_name: lab5_php
     volumes:
       - ./www:/var/www/html
     expose:
       - "9000"
-    networks:
-      - lab2_network
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
 
-networks:
-  lab2_network:
-    driver: bridge
+  db:
+    image: mysql:8.0
+    container_name: lab5_db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: lab5_db
+      MYSQL_USER: lab5_user
+      MYSQL_PASSWORD: lab5_pass
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: unless-stopped
+
+  adminer:
+    image: adminer
+    container_name: lab5_adminer
+    restart: always
+    ports:
+      - "8081:8080"
+    depends_on:
+      - db
+
+volumes:
+  db_data:

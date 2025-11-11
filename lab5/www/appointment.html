@@ -27,30 +27,32 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="doctor_name">👨‍⚕️ Выберите врача:</label>
-                        <select id="doctor_name" name="doctor_name" required>
+                        <label for="doctor_id">👨‍⚕️ Выберите врача:</label>
+                        <select id="doctor_id" name="doctor_id" required>
                             <option value="">-- Выберите врача --</option>
-                            <option value="Иванова А.П.">Иванова А.П. - Терапевт</option>
-                            <option value="Петров С.М.">Петров С.М. - Стоматолог</option>
-                            <option value="Сидорова Е.В.">Сидорова Е.В. - Офтальмолог</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="specialization">🎯 Специализация:</label>
-                        <select id="specialization" name="specialization" required>
-                            <option value="">-- Выберите специализацию --</option>
-                            <option value="Терапевт">Терапевт</option>
-                            <option value="Стоматолог">Стоматолог</option>
-                            <option value="Офтальмолог">Офтальмолог</option>
-                            <option value="Хирург">Хирург</option>
-                            <option value="Невролог">Невролог</option>
+                            <?php
+                            try {
+                                $pdo = new PDO(''mysql:host=db;dbname=clinic_db'', ''clinic_user'', ''clinic_pass'');
+                                $pdo->exec("SET NAMES ''utf8mb4''");
+                                $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                                
+                                $sql = "SELECT * FROM doctors WHERE status = ''active'' ORDER BY name";
+                                $stmt = $pdo->query($sql);
+                                $doctors = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                
+                                foreach ($doctors as $doctor) {
+                                    echo "<option value=''{$doctor[''id'']}''>{$doctor[''name'']} - {$doctor[''specialization'']}</option>";
+                                }
+                            } catch(PDOException $e) {
+                                echo "<option value=''>Ошибка загрузки врачей</option>";
+                            }
+                            ?>
                         </select>
                     </div>
                     
                     <div class="form-group">
                         <label for="appointment_date">📅 Дата приема:</label>
-                        <input type="date" id="appointment_date" name="appointment_date" required min="<?php echo date('Y-m-d'); ?>">
+                        <input type="date" id="appointment_date" name="appointment_date" required min="<?php echo date(''Y-m-d''); ?>">
                     </div>
                     
                     <div class="form-group">
@@ -85,23 +87,9 @@
     </div>
     
     <script>
-        // Автоматическое заполнение специализации при выборе врача
-        document.getElementById('doctor_name').addEventListener('change', function() {
-            const doctorSpecializations = {
-                'Иванова А.П.': 'Терапевт',
-                'Петров С.М.': 'Стоматолог',
-                'Сидорова Е.В.': 'Офтальмолог'
-            };
-            
-            const selectedDoctor = this.value;
-            if (doctorSpecializations[selectedDoctor]) {
-                document.getElementById('specialization').value = doctorSpecializations[selectedDoctor];
-            }
-        });
-        
         // Установка минимальной даты как сегодня
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('appointment_date').min = today;
+        const today = new Date().toISOString().split(''T'')[0];
+        document.getElementById(''appointment_date'').min = today;
     </script>
 </body>
 </html>

@@ -2,6 +2,8 @@
 services:
   nginx:
     image: nginx:alpine
+    depends_on:
+      - lab5_php
     container_name: lab5_nginx
     ports:
       - "8080:80"

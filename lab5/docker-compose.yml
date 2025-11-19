@@ -10,6 +10,9 @@ services:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - php
+    restart: unless-stopped
+    networks:
+      - lab5-network
 
   php:
     build: .
@@ -18,19 +21,28 @@ services:
       - ./www:/var/www/html
     expose:
       - "9000"
+    restart: unless-stopped
+    networks:
+      - lab5-network
+    depends_on:
+      - db
+      - lab5_rabbit # Добавляем зависимость от RabbitMQ
 
   db:
     image: mysql:8.0
     container_name: lab5_db
     environment:
       MYSQL_ROOT_PASSWORD: rootpass
-      MYSQL_DATABASE: clinic_db
+      MYSQL_DATABASE: clinic_db  # Изменил базу на clinic_db для варианта 12
       MYSQL_USER: clinic_user
       MYSQL_PASSWORD: clinic_pass
     ports:
       - "3307:3306"
     volumes:
       - db_data:/var/lib/mysql
+    restart: unless-stopped
+    networks:
+      - lab5-network
 
   adminer:
     image: adminer
@@ -40,6 +52,29 @@ services:
       - "8081:8080"
     depends_on:
       - db
+    networks:
+      - lab5-network
+
+  # Сервис RabbitMQ добавлен один раз
+  lab5_rabbit:
+    image: rabbitmq:3-management
+    container_name: lab5_rabbit
+    ports:
+      - "5672:5672"  # AMQP порт
+      - "15672:15672" # Web UI порт
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    restart: unless-stopped
+    networks:
+      - lab5-network
 
 volumes:
   db_data:
+  rabbitmq_data: # Объявляем том для RabbitMQ
+
+networks:
+  lab5-network:
+    driver: bridge

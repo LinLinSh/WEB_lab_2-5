@@ -1,0 +1,10 @@
+{
+    "require":  {
+
+                },
+    "autoload":  {
+                     "psr4":  {
+                                  "App\\\\":  "www/src/"
+                              }
+                 }
+}
